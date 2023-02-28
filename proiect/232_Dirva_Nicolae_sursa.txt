@@ -1,0 +1,973 @@
+ex 4.
+
+1.PERSOANA:
+create table PERSOANA(
+id_persoana number(5,0) primary key,
+nume varchar2(30) not NULL,
+prenume varchar2(30),
+data_nasterii date,
+numar_telefon varchar2(12),
+email varchar2(50),
+unique(nume, prenume));
+
+2.POST:
+create table POST(
+id_post number(4,0) primary key,
+denumire_post varchar2(15),
+salariu number(6,0));
+
+3.JUCATOR:
+create table JUCATOR(
+id_persoana number(5,0) constraint pk_jucator primary key,
+id_echipa number(6,0),
+id_post number(4,0),
+ultima_echipa varchar2(30),
+foreign key (id_post) references POST(id_post),
+foreign key (id_echipa) references ECHIPA(id_echipa),
+constraint fk_juc_pers foreign key(id_persoana) references PERSOANA(id_persoana) on delete cascade
+);
+
+4.ARBITRU:
+create table ARBITRU(
+id_persoana number(5,0) constraint pk_arbitru primary key,
+liga_arbitraj number(1,0) not NULL,
+constraint fk_arb_pers foreign key (id_persoana) references PERSOANA(id_persoana) on delete cascade
+);
+
+5.PATRON:
+create table PATRON(
+id_persoana number(5,0) constraint pk_patron primary key,
+an_cumparare_echipa date,
+pret_cumparare_echipa number(7,0),
+constraint fk_patr_pers foreign key(id_persoana) references PERSOANA(id_persoana) on delete cascade
+);
+
+ 6.ANTRENOR:
+create table ANTRENOR(
+id_persoana number(5,0) constraint pk_antrenor primary key,
+ani_experienta number(2,0) default 0,
+numar_trofee_castigate number(2,0) default 0,
+constraint fk_ant_pers foreign key(id_persoana) references PERSOANA(id_persoana) on delete cascade
+);
+
+7.ECHIPA:
+create table ECHIPA(
+id_echipa number(6,0) primary key,
+denumire varchar2(30) not NULL unique,
+numar_jucatori number(2,0),
+data_infiintarii date);
+
+8.ACADEMIE:
+create table ACADEMIE(
+id_echipa number(6,0) constraint pk_academie primary key,
+numar_jucatori_transferati number(3,0) default 0,
+constraint fk_acad_echipa foreign key(id_echipa) references ECHIPA(id_echipa) on delete cascade
+);
+
+9.GALERIE:
+create table GALERIE(
+id_galerie number(6,0) primary key,
+numar_participanti number(7,0),
+lider_galerie varchar2(50) unique,
+id_echipa number(6,0),
+foreign key (id_echipa) references ECHIPA(id_echipa)
+);
+
+10.SPONSOR:
+create table SPONSOR(
+id_sponsor number(6,0) primary key,
+nume_sponsor varchar2(30) unique,
+buget_investit number(6,0) default 0,
+numar_echipe_sponsorizate number(1,0));
+
+11.LOCATIE:
+create table LOCATIE(
+cod_locatie number(6,0) primary key,
+oras varchar2(30) unique,
+judet varchar2(30),
+tara varchar2(30));
+
+12.CAMPIONAT:
+create table CAMPIONAT(
+id_campionat number(6,0) primary key,
+tara_desfasurare varchar2(30) unique);
+
+13.ETAPA:
+create table ETAPA(
+cod_etapa number(6,0) primary key,
+numar_etapa number(2,0),
+id_campionat number(6,0),
+foreign key(id_campionat) references CAMPIONAT(id_campionat)
+);
+
+14.MECI:
+create table MECI(
+cod_meci number(6,0) primary key,
+numar_spectatori number(7,0),
+cod_etapa number(6,0),
+id_campionat number(6,0),
+foreign key(cod_etapa) references ETAPA(cod_etapa),
+foreign key(id_campionat) references CAMPIONAT(id_campionat)
+);
+
+15.PLANIFICARE:
+create table PLANIFICARE(
+cod_locatie number(6,0),
+id_echipa1 number(6,0),
+id_echipa2 number(6,0),
+id_campionat number(6,0),
+cod_etapa number(6,0),
+cod_meci number(6,0),
+data date default sysdate,
+primary key(id_campionat, cod_etapa, cod_meci),
+constraint fkloc_plan foreign key(cod_locatie) references LOCATIE(cod_locatie) on delete cascade,
+constraint fk_ech1_plan foreign key(id_echipa1) references ECHIPA(id_echipa) on delete cascade,
+constraint fk_ech2_plan foreign key(id_echipa2) references ECHIPA(id_echipa) on delete cascade,
+constraint fk_camp_plan foreign key(id_campionat) references CAMPIONAT(id_campionat) on delete cascade,
+constraint fk_etapa_plan foreign key(cod_etapa) references ETAPA(cod_etapa) on delete cascade,
+constraint fk_meci_plan foreign key(cod_meci) references MECI(cod_meci) on delete cascade
+);
+
+
+
+16.CONTRACT:
+create table CONTRACT(
+id_echipa number(6,0),
+id_sponsor number(6,0),
+data_inceperii_contractului date,
+data_incheierii_contractului date,
+primary key(id_echipa, id_sponsor),
+constraint fk_contr_ech foreign key(id_echipa) references ECHIPA(id_echipa) on delete cascade,
+constraint fk_contr_spons foreign key(id_sponsor) references SPONSOR(id_sponsor) on delete cascade
+);
+
+############################################################################################################################################################################################
+
+ex 5.
+
+1. PERSOANA:
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(56342, 'Boierasu', 'Marius', TO_DATE('25/03/1995', 'DD/MM/YYYY'),'0785044173','boierasu.marius@yahoo.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(90242, 'Nastasescu', 'Robert', TO_DATE('06/12/1998', 'DD/MM/YYYY'),'0784892235','nastasescu.robert@gmail.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(27946, 'Nasture', 'Bisag-Florin', TO_DATE('20/11/1996', 'DD/MM/YYYY'),'0785428842','bisag-florin202@yahoo.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(88129, 'Oprea', 'Mihai-Cosmin', TO_DATE('19/06/2002', 'DD/MM/YYYY'),'0763895454','oprea.mihai-cosmin2002@gamil.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(45675, 'Dumitru', 'Andreea', TO_DATE('5/11/1996', 'DD/MM/YYYY'),'0768093002','andreea10queen@yahoo.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(5530, 'Florea', 'Ionut', TO_DATE('17/05/1989', 'DD/MM/YYYY'),'0766592051', 'florea-ionut@gmail.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(1518, 'Iancu', 'Iuliana-Maria', TO_DATE('24/10/2003', 'DD/MM/YYYY'),'0784002497','iuliamaria_iancu@yahoo.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(70268, 'Popescu', 'Roberta', TO_DATE('15/02/1998', 'DD/MM/YYYY'),'0795024173','roberta_badgirl@gmail.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(6137, 'Ciuca', 'Gabriel', TO_DATE('22/06/2001', 'DD/MM/YYYY'),'0766498742','ciuca-gabriel@yahoo.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(28864, 'Preda', 'Ana-Maria', TO_DATE('31/07/2005', 'DD/MM/YYYY'),'0743895422','preda.maria2005@yahoo.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(563, 'Sirbu', 'Cosmin', TO_DATE('18/01/2001', 'DD/MM/YYYY'),'0744719945','sirbu.cosmin-gympower@gamil.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(7293, 'Dragan', 'Petrica-Mihai', TO_DATE('07/11/1992', 'DD/MM/YYYY'),'0784894459','dragan-petrica101@yahoo.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(11179, 'Dogaru', 'Alexandru-Ionut', TO_DATE('23/05/1989', 'DD/MM/YYYY'),'0747219022','dogaru-alex@yahoo.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(319, 'Piticu', 'Nicu-Florin', TO_DATE('29/10/2000', 'DD/MM/YYYY'),'0763874554','nicugaming2002@gamil.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(15022, 'Tandarica', 'Diana', TO_DATE('20/12/1990', 'DD/MM/YYYY'),'0744772319','diana.ftwallday@gmail.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(60387, 'Cozma', 'Catalin', TO_DATE('13/06/1982', 'DD/MM/YYYY'),'0789218452','cozma-catalin_soccer@yahoo.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(77287, 'Niculcea', 'Silviu', TO_DATE('24/10/1974', 'DD/MM/YYYY'),'0763788502','friend_with_all2@yahoo.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(76789, 'Dobrogean', 'Gabi', TO_DATE('25/08/1985', 'DD/MM/YYYY'),'0727391736','dobrogean.gabi@yahoo.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(94990, 'Casadescu', 'Ioan-Gheorghita', TO_DATE('21/02/1972', 'DD/MM/YYYY'),'0763895454','casadescu.geo@gamil.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(22075, 'Bragadita', 'Ioana-Bianca', TO_DATE('15/01/2006', 'DD/MM/YYYY'),'0765294731','ioana.bianca101@yahoo.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(37715, 'Cazacu', 'Bogdan', TO_DATE('17/02/1984', 'DD/MM/YYYY'),'0766895274', 'bogdan-cazacu@gmail.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(43786, 'Leustean', 'Daria-Maria', TO_DATE('24/12/1979', 'DD/MM/YYYY'),'0784070497','leustean_maria_arb@yahoo.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(72437, 'Mihalache', 'Gabriela', TO_DATE('22/04/1987', 'DD/MM/YYYY'),'0727674490','gabi_mihalache202@yahoo.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(10164, 'Burtan', 'Danut-Ilie', TO_DATE('26/11/1977', 'DD/MM/YYYY'),'0763789286','burtan_77_ilie@gmail.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(8680, 'Stefanescu', 'Bianca', TO_DATE('11/07/1988', 'DD/MM/YYYY'),'0765298001','stefanescu.bianca@yahoo.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(979, 'Iliescu', 'Darius-Olaru', TO_DATE('17/10/1988', 'DD/MM/YYYY'),'0762985274', 'darius_power23@gmail.com');
+insert into PERSOANA(id_persoana, nume, prenume, data_nasterii, numar_telefon, email)
+values(21126, 'Gheorghita', 'Sebastian', TO_DATE('21/03/1972', 'DD/MM/YYYY'),'0784074231','sebi_gheorghita@yahoo.com');
+
+2.POST:
+insert into POST(id_post, denumire_post, salariu)
+values(557,'portar', 66500);
+insert into POST(id_post, denumire_post, salariu)
+values(9566,'fundas', 19550);
+insert into POST(id_post, denumire_post, salariu)
+values(6704,'atacant', 95000);
+insert into POST(id_post, denumire_post, salariu)
+values(2931,'atacant', 37500);
+insert into POST(id_post, denumire_post, salariu)
+values(8725,'fundas', 45400);
+insert into POST(id_post, denumire_post, salariu)
+values(390,'fundas', 24500);
+insert into POST(id_post, denumire_post, salariu)
+values(1473,'mijlocas', 79900);
+insert into POST(id_post, denumire_post, salariu)
+values(144,'mijlocas', 89000);
+insert into POST(id_post, denumire_post, salariu)
+values(4781,'mijlocas', 14200);
+insert into POST(id_post, denumire_post, salariu)
+values(3214,'fundas', 43220);
+insert into POST(id_post, denumire_post, salariu)
+values(4669,'fundas', 17500);
+insert into POST(id_post, denumire_post, salariu)
+values(3965,'mijlocas', 52500);
+
+3.JUCATOR:
+insert into jucator(id_persoana, id_echipa, id_post, ultima_echipa)
+values(22075,509721, 6704,'CFR CLUJ');
+insert into jucator(id_persoana, id_echipa, id_post, ultima_echipa)
+values(56342,509721, 557,'CFR CLUJ');
+insert into jucator(id_persoana, id_echipa, id_post, ultima_echipa)
+values(7293,834063, 9566,'Real Madrid');
+insert into jucator(id_persoana, id_echipa, id_post, ultima_echipa)
+values(88129,135775, 6704,'U CLUJ');
+insert into jucator(id_persoana, id_echipa, id_post, ultima_echipa)
+values(563,565409, 2931,'Valancia');
+insert into jucator(id_persoana, id_echipa, id_post, ultima_echipa)
+values(45675,565409, 8725,'Atletico Madrid');
+insert into jucator(id_persoana, id_echipa, id_post, ultima_echipa)
+values(28864,565409, 390,'Liverpool');
+insert into jucator(id_persoana, id_echipa, id_post, ultima_echipa)
+values(6137,759348, 144,'BARCELONA');
+insert into jucator(id_persoana, id_echipa, id_post, ultima_echipa)
+values(1518,135775, 4781,'Universitatea Craiova');
+insert into jucator(id_persoana, id_echipa, id_post, ultima_echipa)
+values(70268,759348, 3214,'Chelsea');
+insert into jucator(id_persoana, id_echipa, id_post, ultima_echipa)
+values(90242,135775, 4669,'CSA Steaua');
+
+4.ARBITRU:
+insert into ARBITRU(id_persoana, liga_arbitraj)
+values (43786, 4);
+insert into ARBITRU(id_persoana, liga_arbitraj)
+values (37715, 2);
+insert into ARBITRU(id_persoana, liga_arbitraj)
+values (22075, 6);
+insert into ARBITRU(id_persoana, liga_arbitraj)
+values (94990, 1);
+insert into ARBITRU(id_persoana, liga_arbitraj)
+values (76789, 1);
+
+
+5.PATRON:
+insert into PATRON(id_persoana, an_cumparare_echipa, pret_cumparare_echipa)
+values(72437, TO_DATE('24/04/1994', 'DD/MM/YYYY'), 4500000);
+insert into PATRON(id_persoana, an_cumparare_echipa, pret_cumparare_echipa)
+values(10164, TO_DATE('12/02/2004', 'DD/MM/YYYY'), 9500000);
+insert into PATRON(id_persoana, an_cumparare_echipa, pret_cumparare_echipa)
+values(8680, TO_DATE('17/05/2009', 'DD/MM/YYYY'), 2200000);
+insert into PATRON(id_persoana, an_cumparare_echipa, pret_cumparare_echipa)
+values(979, TO_DATE('07/12/1990', 'DD/MM/YYYY'), 750000);
+insert into PATRON(id_persoana, an_cumparare_echipa, pret_cumparare_echipa)
+values(21126, TO_DATE('03/09/2012', 'DD/MM/YYYY'), 6800000);
+
+6.ANTRENOR:
+insert into ANTRENOR(id_persoana, ani_experienta, numar_trofee_castigate)
+values(319,8,2);
+insert into ANTRENOR(id_persoana, ani_experienta, numar_trofee_castigate)
+values(11179,12,4);
+insert into ANTRENOR(id_persoana, ani_experienta, numar_trofee_castigate)
+values(60387,1,0);
+insert into ANTRENOR(id_persoana, ani_experienta, numar_trofee_castigate)
+values(77287,21,9);
+insert into ANTRENOR(id_persoana, ani_experienta, numar_trofee_castigate)
+values(15022,10,1);
+
+
+7.ECHIPA:
+insert into ECHIPA(id_echipa, denumire, numar_jucatori, data_infiintarii)
+values(135775, 'CFR CLUJ',2,TO_DATE('15/05/1907', 'DD/MM/YYYY'));
+insert into ECHIPA(id_echipa, denumire, numar_jucatori, data_infiintarii)
+values(509721, 'FCSB',2,TO_DATE('07/06/1947', 'DD/MM/YYYY'));
+insert into ECHIPA(id_echipa, denumire, numar_jucatori, data_infiintarii)
+values(804263, 'Liverpool',3,TO_DATE('03/06/1892', 'DD/MM/YYYY'));
+insert into ECHIPA(id_echipa, denumire, numar_jucatori, data_infiintarii)
+values(454366, 'MANCESTER CITY',2,TO_DATE('23/09/1880', 'DD/MM/YYYY'));
+insert into ECHIPA(id_echipa, denumire, numar_jucatori, data_infiintarii)
+values(565409, 'Real Madrid',2,TO_DATE('06/03/1902', 'DD/MM/YYYY'));
+insert into ECHIPA(id_echipa, denumire, numar_jucatori, data_infiintarii)
+values(834063, 'Barcelona',2,TO_DATE('23/08/1894', 'DD/MM/YYYY'));
+insert into ECHIPA(id_echipa, denumire, numar_jucatori, data_infiintarii)
+values(751699, 'Valencia',2,TO_DATE('02/02/1921', 'DD/MM/YYYY'));
+insert into ECHIPA(id_echipa, denumire, numar_jucatori, data_infiintarii)
+values(313601, 'Atletico Madrid',3,TO_DATE('29/11/1882', 'DD/MM/YYYY'));
+insert into ECHIPA(id_echipa, denumire, numar_jucatori, data_infiintarii)
+values(218179, 'Chelsea',2,TO_DATE('13/10/1872', 'DD/MM/YYYY'));
+insert into ECHIPA(id_echipa, denumire, numar_jucatori, data_infiintarii)
+values(67027, 'Leicester City FC',2,TO_DATE('26/07/1947', 'DD/MM/YYYY'));
+insert into ECHIPA(id_echipa, denumire, numar_jucatori, data_infiintarii)
+values(759348, 'PSG',2,TO_DATE('18/02/1917', 'DD/MM/YYYY'));
+insert into ECHIPA(id_echipa, denumire, numar_jucatori, data_infiintarii)
+values(88815, 'Monaco',2,TO_DATE('09/08/1925', 'DD/MM/YYYY'));
+insert into ECHIPA(id_echipa, denumire, numar_jucatori, data_infiintarii)
+values(812075, 'Bayern Munchen',2,TO_DATE('28/05/1902', 'DD/MM/YYYY'));
+insert into ECHIPA(id_echipa, denumire, numar_jucatori, data_infiintarii)
+values(776588, 'Frankfurt',2,TO_DATE('19/10/1967', 'DD/MM/YYYY'));
+
+8.ACADEMIE:
+insert into ACADEMIE(id_echipa, numar_jucatori_transferati)
+values(135775, 7);
+insert into ACADEMIE(id_echipa, numar_jucatori_transferati)
+values(509721, 16);
+insert into ACADEMIE(id_echipa, numar_jucatori_transferati)
+values(804263, 41);
+insert into ACADEMIE(id_echipa, numar_jucatori_transferati)
+values(454366,67);
+insert into ACADEMIE(id_echipa, numar_jucatori_transferati)
+values(565409, 79);
+
+9.GALERIE:
+insert into GALERIE(id_galerie, numar_participanti, lider_galerie, id_echipa)
+values(917762, 7500, 'Sumudica Marius', 135775);
+insert into GALERIE(id_galerie, numar_participanti, lider_galerie, id_echipa)
+values(800726, 12500, 'Oprescu Iulian-Cosmin', 509721);
+insert into GALERIE(id_galerie, numar_participanti, lider_galerie, id_echipa)
+values(632777, 22000, 'Dumitru Miles', 804263);
+insert into GALERIE(id_galerie, numar_participanti, lider_galerie, id_echipa)
+values(161188, 18500, 'Diguru Jhon', 454366);
+insert into GALERIE(id_galerie, numar_participanti, lider_galerie, id_echipa)
+values(81035, 27500, 'Radulescu George-Simion', 565409);
+
+10.SPONSOR:
+insert into SPONSOR(id_sponsor, nume_sponsor, buget_investit, numar_echipe_sponsorizate)
+values(190841 , 'City Insurance',500000, 2);
+insert into SPONSOR(id_sponsor, nume_sponsor, buget_investit, numar_echipe_sponsorizate)
+values(240555 , 'eToro',375000, 1);
+insert into SPONSOR(id_sponsor, nume_sponsor, buget_investit, numar_echipe_sponsorizate)
+values(212094 , 'Nivea Men',950000, 3);
+insert into SPONSOR(id_sponsor, nume_sponsor, buget_investit, numar_echipe_sponsorizate)
+values(688148 , 'Adidas',990000, 2);
+insert into SPONSOR(id_sponsor, nume_sponsor, buget_investit, numar_echipe_sponsorizate)
+values(738780 , 'EA Sports',850000, 5);
+
+11.LOCATIE:
+insert into LOCATIE(cod_locatie, oras, judet, tara)
+values(454705, 'Bucuresti', 'Bucuresti', 'Romania');
+insert into LOCATIE(cod_locatie, oras, judet, tara)
+values(551169, 'Cluj', 'Cluj', 'Romania');
+insert into LOCATIE(cod_locatie, oras, judet, tara)
+values(795891, 'Madrid', 'Castile-Leon', 'Spania');
+insert into LOCATIE(cod_locatie, oras, judet, tara)
+values(528065, 'Liverpool', ' Halton', 'Anglia');
+insert into LOCATIE(cod_locatie, oras, judet, tara)
+values(931990, 'Mancester', ' North West England', 'Anglia');
+insert into LOCATIE(cod_locatie, oras, judet, tara)
+values(445801, 'Paris', 'Paris', 'Franta');
+insert into LOCATIE(cod_locatie, oras, judet, tara)
+values(599802, 'Frankfurt', ' Rhine-Main', 'Germania');
+
+12.CAMPIONAT:
+insert into CAMPIONAT(id_campionat, tara_desfasurare)
+values(822766, 'Romania');
+insert into CAMPIONAT(id_campionat, tara_desfasurare)
+values(852313, 'Spania');
+insert into CAMPIONAT(id_campionat, tara_desfasurare)
+values(610930, 'Anglia');
+insert into CAMPIONAT(id_campionat, tara_desfasurare)
+values(685244, 'Franta');
+insert into CAMPIONAT(id_campionat, tara_desfasurare)
+values(731790, 'Germania');
+
+13.ETAPA:
+insert into ETAPA(cod_etapa, numar_etapa, id_campionat)
+values(39983, 5,822766);
+insert into ETAPA(cod_etapa, numar_etapa, id_campionat)
+values(829285, 27,852313);
+insert into ETAPA(cod_etapa, numar_etapa, id_campionat)
+values(661780, 32,610930);
+insert into ETAPA(cod_etapa, numar_etapa, id_campionat)
+values(367839, 12,685244);
+insert into ETAPA(cod_etapa, numar_etapa, id_campionat)
+values(20121, 21,731790);
+
+14.MECI:
+insert into MECI(cod_meci, numar_spectatori, cod_etapa, id_campionat)
+values(205010, 23000,39983,822766);
+insert into MECI(cod_meci, numar_spectatori, cod_etapa, id_campionat)
+values(655318, 27000,829285,852313);
+insert into MECI(cod_meci, numar_spectatori, cod_etapa, id_campionat)
+values(826279, 48000,661780,610930);
+insert into MECI(cod_meci, numar_spectatori, cod_etapa, id_campionat)
+values(814721, 35000,367839,685244);
+insert into MECI(cod_meci, numar_spectatori, cod_etapa, id_campionat)
+values(753243, 50000,20121,731790);
+insert into MECI(cod_meci, numar_spectatori, cod_etapa, id_campionat)
+values(498978, 30000,39983,822766);
+insert into MECI(cod_meci, numar_spectatori, cod_etapa, id_campionat)
+values(725963, 40000,829285,852313);
+insert into MECI(cod_meci, numar_spectatori, cod_etapa, id_campionat)
+values(171544, 55000,661780,610930);
+insert into MECI(cod_meci, numar_spectatori, cod_etapa, id_campionat)
+values(405085, 20000,367839,685244);
+insert into MECI(cod_meci, numar_spectatori, cod_etapa, id_campionat)
+values(603706, 45000,20121,731790);
+
+15.PLANIFICARE:
+insert into planificare(cod_locatie, id_echipa1, id_echipa2, id_campionat, cod_etapa, cod_meci, data)
+values(551169, 509721, 135775, 822766, 39983, 498978, TO_DATE('25/10/2022', 'DD/MM/YYYY'));
+insert into planificare(cod_locatie, id_echipa1, id_echipa2, id_campionat, cod_etapa, cod_meci, data)
+values(795891, 565409, 313601, 852313, 829285, 725963, TO_DATE('07/08/2022', 'DD/MM/YYYY'));
+insert into planificare(cod_locatie, id_echipa1, id_echipa2, id_campionat, cod_etapa, cod_meci, data)
+values(931990, 67027, 804263, 610930, 661780, 171544, TO_DATE('14/06/2022', 'DD/MM/YYYY'));
+insert into planificare(cod_locatie, id_echipa1, id_echipa2, id_campionat, cod_etapa, cod_meci, data)
+values(445801, 759348, 88815, 685244, 367839, 405085, TO_DATE('22/07/2022', 'DD/MM/YYYY'));
+insert into planificare(cod_locatie, id_echipa1, id_echipa2, id_campionat, cod_etapa, cod_meci, data)
+values(599802, 812075, 776588, 731790, 20121, 603706, TO_DATE('02/11/2022', 'DD/MM/YYYY'));
+insert into planificare(cod_locatie, id_echipa1, id_echipa2, id_campionat, cod_etapa, cod_meci, data)
+values(528065, 804263, 454366, 852313, 829285, 655318, TO_DATE('05/08/2022', 'DD/MM/YYYY'));
+insert into planificare(cod_locatie, id_echipa1, id_echipa2, id_campionat, cod_etapa, cod_meci, data)
+values(931990, 218179, 67027, 610930, 661780, 826279, TO_DATE('24/07/2022', 'DD/MM/YYYY'));
+insert into planificare(cod_locatie, id_echipa1, id_echipa2, id_campionat, cod_etapa, cod_meci, data)
+values(795891, 313601, 751699, 685244, 367839, 814721, TO_DATE('21/09/2022', 'DD/MM/YYYY'));
+insert into planificare(cod_locatie, id_echipa1, id_echipa2, id_campionat, cod_etapa, cod_meci, data)
+values(795891, 834063, 565409, 731790, 20121, 753243, TO_DATE('04/12/2022', 'DD/MM/YYYY'));
+insert into planificare(cod_locatie, id_echipa1, id_echipa2, id_campionat, cod_etapa, cod_meci, data)
+values(551169, 509721, 135775, 822766, 39983, 171544, TO_DATE('25/10/2022', 'DD/MM/YYYY'));
+insert into planificare(cod_locatie, id_echipa1, id_echipa2, id_campionat, cod_etapa, cod_meci, data)
+values(795891, 565409, 313601, 852313, 829285, 171544, TO_DATE('07/08/2022', 'DD/MM/YYYY'));
+
+16.CONTRACT:
+insert into CONTRACT(id_echipa, id_sponsor, data_inceperii_contractului, data_incheierii_contractului)
+values(509721, 738780, TO_DATE('01/06/2011', 'DD/MM/YYYY'), TO_DATE('05/07/2025', 'DD/MM/YYYY'));
+insert into CONTRACT(id_echipa, id_sponsor, data_inceperii_contractului, data_incheierii_contractului)
+values(135775, 190841, TO_DATE('05/04/1911', 'DD/MM/YYYY'), TO_DATE('05/04/2024', 'DD/MM/YYYY'));
+insert into CONTRACT(id_echipa, id_sponsor, data_inceperii_contractului, data_incheierii_contractului)
+values(509721, 190841, TO_DATE('15/11/2002', 'DD/MM/YYYY'), TO_DATE('15/11/2030', 'DD/MM/YYYY'));
+insert into CONTRACT(id_echipa, id_sponsor, data_inceperii_contractului, data_incheierii_contractului)
+values(804263, 240555, TO_DATE('27/07/1982', 'DD/MM/YYYY'), TO_DATE('27/07/2023', 'DD/MM/YYYY'));
+insert into CONTRACT(id_echipa, id_sponsor, data_inceperii_contractului, data_incheierii_contractului)
+values(454366, 212094, TO_DATE('11/09/1998', 'DD/MM/YYYY'), TO_DATE('11/09/2027', 'DD/MM/YYYY'));
+insert into CONTRACT(id_echipa, id_sponsor, data_inceperii_contractului, data_incheierii_contractului)
+values(565409, 212094, TO_DATE('14/02/2019', 'DD/MM/YYYY'), TO_DATE('14/02/2035', 'DD/MM/YYYY'));
+insert into CONTRACT(id_echipa, id_sponsor, data_inceperii_contractului, data_incheierii_contractului)
+values(834063, 212094, TO_DATE('21/06/2005', 'DD/MM/YYYY'), TO_DATE('21/06/2029', 'DD/MM/YYYY'));
+insert into CONTRACT(id_echipa, id_sponsor, data_inceperii_contractului, data_incheierii_contractului)
+values(751699, 688148, TO_DATE('26/12/1997', 'DD/MM/YYYY'), TO_DATE('26/12/2026', 'DD/MM/YYYY'));
+insert into CONTRACT(id_echipa, id_sponsor, data_inceperii_contractului, data_incheierii_contractului)
+values(313601, 688148, TO_DATE('19/03/2012', 'DD/MM/YYYY'), TO_DATE('19/03/2032', 'DD/MM/YYYY'));
+insert into CONTRACT(id_echipa, id_sponsor, data_inceperii_contractului, data_incheierii_contractului)
+values(218179, 738780, TO_DATE('16/05/2003', 'DD/MM/YYYY'), TO_DATE('16/05/2028', 'DD/MM/YYYY'));
+insert into CONTRACT(id_echipa, id_sponsor, data_inceperii_contractului, data_incheierii_contractului)
+values(67027, 738780, TO_DATE('02/04/2006', 'DD/MM/YYYY'), TO_DATE('02/04/2024', 'DD/MM/YYYY'));
+insert into CONTRACT(id_echipa, id_sponsor, data_inceperii_contractului, data_incheierii_contractului)
+values(812075, 738780, TO_DATE('07/11/2012', 'DD/MM/YYYY'), TO_DATE('07/11/2030', 'DD/MM/YYYY'));
+insert into CONTRACT(id_echipa, id_sponsor, data_inceperii_contractului, data_incheierii_contractului)
+values(88815, 738780, TO_DATE('22/12/1989', 'DD/MM/YYYY'), TO_DATE('22/12/2023', 'DD/MM/YYYY'));
+insert into CONTRACT(id_echipa, id_sponsor, data_inceperii_contractului, data_incheierii_contractului)
+values(759348, 738780, TO_DATE('27/08/2019', 'DD/MM/YYYY'), TO_DATE('27/08/2040', 'DD/MM/YYYY'));
+
+############################################################################################################################################################################################
+
+ex 6.
+
+create or replace procedure pct6
+    (n number)
+IS
+    type nume_jucator is varray(100) of persoana.nume%type;
+    v_nume nume_jucator := nume_jucator();
+    type id_echipe is table of number index by pls_integer;
+    v_id_echipe id_echipe;
+    nume_echipa echipa.denumire%TYPE;
+    nr number;
+BEGIN
+    select * bulk collect into v_id_echipe
+    from (select e.id_echipa
+            from echipa e, sponsor s, contract c
+            where e.data_infiintarii > '01-JAN-1900' and e.id_echipa = c.id_echipa and c.id_sponsor=s.id_sponsor 
+            and s.numar_echipe_sponsorizate > 2
+            order by e.data_infiintarii)
+    where rownum < n+1;
+
+    for i in v_id_echipe.first .. v_id_echipe.last loop  
+        select denumire into nume_echipa
+        from echipa
+        where id_echipa = v_id_echipe(i);
+        
+        DBMS_OUTPUT.PUT_LINE('Jucatori din echipa ' || nume_echipa || ':');
+        
+        select * bulk collect into v_nume
+        from(select p.nume
+            from persoana p, jucator j, echipa e
+            where p.id_persoana = j.id_persoana and e.id_echipa = j.id_echipa and e.id_echipa = v_id_echipe(i));
+            
+        select count(*) into nr
+        from(select p.nume
+            from persoana p, jucator j, echipa e
+            where p.id_persoana = j.id_persoana and e.id_echipa = j.id_echipa and e.id_echipa = v_id_echipe(i));
+        
+        if nr != 0 then
+            for j in v_nume.first .. v_nume.last loop
+                DBMS_OUTPUT.PUT_LINE(v_nume(j));
+            end loop;
+        else
+            DBMS_OUTPUT.PUT_LINE('In echipa nu exista jucatori inscrisi!');
+        end if;
+    end loop;
+end;
+/
+
+############################################################################################################################################################################################
+
+ex 7.
+
+
+
+create or replace procedure pct7
+IS
+    cursor c1 is
+        select post.denumire_post, floor(avg(salariu))
+        from post
+        group by post.denumire_post;
+    nume_jucator post.denumire_post%TYPE;
+    sal post.salariu%TYPE;
+        
+BEGIN
+    for c1 in(select denumire_post as nume_post, floor(avg(salariu)) as medie_sal
+        from post
+        group by denumire_post)
+    
+    loop
+        declare
+            cursor c2(nume_post post.denumire_post%TYPE, medie_sal post.salariu%TYPE) IS
+                select p.nume, o.salariu
+                from persoana p, post o, jucator j
+                where p.id_persoana = j.id_persoana and j.id_post = o.id_post and o.denumire_post = nume_post and o.salariu > medie_sal;
+        begin
+            DBMS_OUTPUT.PUT_LINE('Pe postul ' || c1.nume_post || ' este media salariilor ' || c1.medie_sal || ' si se incadreaza:');
+            open c2(c1.nume_post, c1.medie_sal);
+            loop
+            
+                fetch c2 into nume_jucator, sal;
+                exit when c2%notfound;
+                
+                DBMS_OUTPUT.PUT_LINE('Nume: ' || nume_jucator || '  Salariu: ' || sal);
+            
+            end loop;
+            close c2;
+        end;
+    
+    end loop;
+END;
+
+############################################################################################################################################################################################
+
+ex8.
+
+create or replace function jucatori_activi(id echipa.id_echipa%TYPE)
+    return number
+AS
+    cnt number;
+BEGIN
+    select count(*) into cnt
+    from echipa e, jucator j
+    where e.id_echipa = j.id_echipa and e.id_echipa = id;
+    
+    return cnt;
+END;
+
+create or replace function pct8(sponsorizare number)
+    return number
+IS
+    type id is varray(100) of echipa.id_echipa%TYPE;
+    id_echipe_p id := id();
+    id_e echipa.id_echipa%TYPE;
+    maxi number := -1;
+    curent number;
+    no_data EXCEPTION;
+    too_many EXCEPTION;
+BEGIN
+    select e.id_echipa bulk collect into id_echipe_p
+    from echipa e, contract c, sponsor s
+    where e.id_echipa = c.id_echipa and c.id_sponsor = s.id_sponsor and s.buget_investit > sponsorizare 
+    and lower(to_char(c.data_inceperii_contractului, 'mon')) = 'jun';
+    
+    select count(*) into curent
+    from echipa e, contract c, sponsor s
+    where e.id_echipa = c.id_echipa and c.id_sponsor = s.id_sponsor and s.buget_investit > sponsorizare 
+    and lower(to_char(c.data_inceperii_contractului, 'mon')) = 'jun';
+    
+    if curent != 0 then
+        for i in id_echipe_p.first .. id_echipe_p.last loop
+            curent := jucatori_activi(id_echipe_p(i));
+            if curent > maxi then
+                maxi := curent;
+            end if;
+        end loop;
+    else
+        RAISE no_data;
+    end if;
+
+    select count(e.id_echipa) into curent
+    from echipa e, contract c, sponsor s
+    where e.id_echipa = c.id_echipa and c.id_sponsor = s.id_sponsor and s.buget_investit > sponsorizare
+    and lower(to_char(c.data_inceperii_contractului, 'mon')) = 'jun';
+
+    if curent = 1 then
+        select id_echipa into id_e
+        from echipa
+        where id_echipa in (select e.id_echipa
+                            from echipa e, contract c, sponsor s
+                            where e.id_echipa = c.id_echipa and c.id_sponsor = s.id_sponsor and s.buget_investit > sponsorizare
+                            and lower(to_char(c.data_inceperii_contractului, 'mon')) = 'jun')
+        and jucatori_activi(id_echipa) = maxi;
+    
+        return id_e;
+    else
+        RAISE too_many;
+    end if;
+EXCEPTION
+    when too_many then
+        DBMS_OUTPUT.PUT_LINE('Exista mai multe echipe care indeplicesc cerintele!');
+        return -1;
+    when no_data then
+        DBMS_OUTPUT.PUT_LINE('Nu exista echipe care indeplicesca cerintele!');
+        return -2;
+    when others then
+        DBMS_OUTPUT.PUT_LINE('Alta eroare');
+        return -3;
+end pct8;
+
+############################################################################################################################################################################################
+
+ex 9.
+
+create or replace procedure pct9
+    (x IN number)
+IS
+    id_e echipa.id_echipa%TYPE;
+    minor EXCEPTION;
+    varsta number;
+
+BEGIN
+
+    select distinct e.id_echipa into id_e
+    from echipa e, contract c, sponsor s, galerie g, campionat m, planificare l
+    where e.id_echipa = c.id_echipa and c.id_sponsor = s.id_sponsor and lower(s.nume_sponsor) = 'city insurance'
+    and g.id_echipa = e.id_echipa and g.numar_participanti > x and (e.id_echipa = l.id_echipa1 or e.id_echipa = l.id_echipa2) 
+    and l.id_campionat = m.id_campionat and m.tara_desfasurare = 'Romania';
+    
+    for c in(select p.nume as nume, p.data_nasterii as an_nastere
+            from persoana p, echipa e, jucator j
+            where e.id_echipa = id_e and j.id_persoana = p.id_persoana and j.id_echipa = e.id_echipa
+            order by 2 desc)
+    loop
+        select ROUND(MONTHS_BETWEEN(SYSDATE, c.an_nastere))/12 into varsta
+        from dual;
+        if varsta > 18 then
+            DBMS_OUTPUT.PUT_LINE('Nume: ' || c.nume || ' Data nasterii: ' || c.an_nastere);
+        else
+            RAISE minor;
+        end if;
+    end loop;
+    
+EXCEPTION
+    when no_data_found then
+        DBMS_OUTPUT.PUT_LINE('Nu exista echipe care sa indeplineasca cerintele!');
+    when too_many_rows then
+        DBMS_OUTPUT.PUT_LINE('Exista mai multe echipe care indeplinesc cerintele!');
+    when minor then
+        DBMS_OUTPUT.PUT_LINE('Jucatorul nu are varsta legala pentru a semna un contract!');
+    when others then
+        DBMS_OUTPUT.PUT_LINE('Alta eroare');
+END pct9;
+/
+
+############################################################################################################################################################################################
+
+ex 10.
+
+create or replace trigger pct10
+after insert or delete or update of id_persoana on persoana
+
+BEGIN
+    if USER = upper('system') then
+        RAISE_APPLICATION_ERROR(-2000,'Momentan nu poti modifica tabela PERSOANA!');
+    end if;
+END;
+/
+
+
+############################################################################################################################################################################################
+
+ex 11.
+
+create or replace procedure modificare_echipa(id_e echipa.id_echipa%TYPE, 
+                                            x number)
+IS
+BEGIN
+    update echipa
+    set numar_jucatori = numar_jucatori + x
+    where id_echipa = id_e;
+END;
+
+create or replace trigger pct11
+    after delete or insert or update of id_echipa on jucator
+    for each row
+BEGIN
+    if deleting then
+        modificare_echipa(:OLD.id_echipa, -1);
+    elsif inserting then
+        modificare_echipa(:NEW.id_echipa, 1);
+    else
+        modificare_echipa(:OLD.id_echipa, -1);
+        modificare_echipa(:NEW.id_echipa, 1);
+    end if;
+end;
+
+
+############################################################################################################################################################################################
+
+ex 12.
+
+create sequence secventa_tri
+start with 1
+increment by 1
+maxvalue 150
+nocycle 
+nocache;
+
+CREATE TABLE table_creator(
+   id_log int PRIMARY KEY,
+   event varchar2(20) NOT NULL,
+   date_event date NOT NULL,
+   user_c varchar2(30) NOT NULL
+);
+
+create or replace trigger pct12
+    after create or drop or alter on database
+
+begin
+    INSERT INTO table_creator(id_log,event,date_event,user_c)
+    VALUES (secventa_tri.nextval, SYS.SYSEVENT,SYSDATE,SYS.LOGIN_USER);
+END;
+
+############################################################################################################################################################################################
+
+ex 13.
+
+create or replace package pct13 as
+    procedure pct6(n number);
+    procedure pct7;
+    function jucatori_activi(id echipa.id_echipa%TYPE)
+    	return number;
+    function pct8(sponsorizare number)
+        return number;
+    procedure pct9(x IN number);
+    procedure modificare_echipa(id_e echipa.id_echipa%TYPE, x number);
+end pct13;
+/
+create or replace package body pct13 as
+
+    procedure pct6
+        (n number)
+    IS
+        type nume_jucator is varray(100) of persoana.nume%type;
+        v_nume nume_jucator := nume_jucator();
+        type id_echipe is table of number index by pls_integer;
+        v_id_echipe id_echipe;
+        nume_echipa echipa.denumire%TYPE;
+        nr number;
+    BEGIN
+        select * bulk collect into v_id_echipe
+        from (select e.id_echipa
+                from echipa e, sponsor s, contract c
+                where e.data_infiintarii > '01-JAN-1900' and e.id_echipa = c.id_echipa and c.id_sponsor=s.id_sponsor 
+                and s.numar_echipe_sponsorizate > 2
+                order by e.data_infiintarii)
+        where rownum < n+1;
+    
+        for i in v_id_echipe.first .. v_id_echipe.last loop  
+            select denumire into nume_echipa
+            from echipa
+            where id_echipa = v_id_echipe(i);
+            
+            DBMS_OUTPUT.PUT_LINE('Jucatori din echipa ' || nume_echipa || ':');
+            
+            select * bulk collect into v_nume
+            from(select p.nume
+                from persoana p, jucator j, echipa e
+                where p.id_persoana = j.id_persoana and e.id_echipa = j.id_echipa and e.id_echipa = v_id_echipe(i));
+                
+            select count(*) into nr
+            from(select p.nume
+                from persoana p, jucator j, echipa e
+                where p.id_persoana = j.id_persoana and e.id_echipa = j.id_echipa and e.id_echipa = v_id_echipe(i));
+            
+            if nr != 0 then
+                for j in v_nume.first .. v_nume.last loop
+                    DBMS_OUTPUT.PUT_LINE(v_nume(j));
+                end loop;
+            else
+                DBMS_OUTPUT.PUT_LINE('In echipa nu exista jucatori inscrisi!');
+            end if;
+        end loop;
+    end;
+    
+    procedure pct7
+    IS
+        cursor c1 is
+            select post.denumire_post, floor(avg(salariu))
+            from post
+            group by post.denumire_post;
+        nume_jucator post.denumire_post%TYPE;
+        sal post.salariu%TYPE;
+            
+    BEGIN
+        for c1 in(select denumire_post as nume_post, floor(avg(salariu)) as medie_sal
+            from post
+            group by denumire_post)
+        
+        loop
+            declare
+                cursor c2(nume_post post.denumire_post%TYPE, medie_sal post.salariu%TYPE) IS
+                    select p.nume, o.salariu
+                    from persoana p, post o, jucator j
+                    where p.id_persoana = j.id_persoana and j.id_post = o.id_post and o.denumire_post = nume_post and o.salariu > medie_sal;
+            begin
+                DBMS_OUTPUT.PUT_LINE('Pe postul ' || c1.nume_post || ' este media salariilor ' || c1.medie_sal || ' si se incadreaza:');
+                open c2(c1.nume_post, c1.medie_sal);
+                loop
+                
+                    fetch c2 into nume_jucator, sal;
+                    exit when c2%notfound;
+                    
+                    DBMS_OUTPUT.PUT_LINE('Nume: ' || nume_jucator || '  Salariu: ' || sal);
+                
+                end loop;
+                close c2;
+            end;
+        
+        end loop;
+    END;
+
+    function jucatori_activi(id echipa.id_echipa%TYPE)
+    	return number
+    AS
+    	cnt number;
+    BEGIN
+    	select count(*) into cnt
+    	from echipa e, jucator j
+    	where e.id_echipa = j.id_echipa and e.id_echipa = id;
+    
+    	return cnt;
+    END;
+
+    function pct8(sponsorizare number)
+        return number
+    IS
+        type id is varray(100) of echipa.id_echipa%TYPE;
+        id_echipe_p id := id();
+        id_e echipa.id_echipa%TYPE;
+        maxi number := -1;
+        curent number;
+        no_data EXCEPTION;
+    BEGIN
+        select e.id_echipa bulk collect into id_echipe_p
+        from echipa e, contract c, sponsor s
+        where e.id_echipa = c.id_echipa and c.id_sponsor = s.id_sponsor and s.buget_investit > sponsorizare 
+        and lower(to_char(c.data_inceperii_contractului, 'mon')) = 'jun';
+        
+        select count(*) into curent
+        from echipa e, contract c, sponsor s
+        where e.id_echipa = c.id_echipa and c.id_sponsor = s.id_sponsor and s.buget_investit > sponsorizare 
+        and lower(to_char(c.data_inceperii_contractului, 'mon')) = 'jun';
+        
+        if curent != 0 then
+            for i in id_echipe_p.first .. id_echipe_p.last loop
+                curent := jucatori_activi(id_echipe_p(i));
+                if curent > maxi then
+                    maxi := curent;
+                end if;
+            end loop;
+        else
+            RAISE no_data;
+        end if;
+    
+        select id_echipa into id_e
+        from echipa
+        where id_echipa in (select e.id_echipa
+                            from echipa e, contract c, sponsor s
+                            where e.id_echipa = c.id_echipa and c.id_sponsor = s.id_sponsor and s.buget_investit > sponsorizare
+                            and lower(to_char(c.data_inceperii_contractului, 'mon')) = 'jun')
+        and jucatori_activi(id_echipa) = maxi;
+        
+        return id_e;
+    EXCEPTION
+        when too_many_rows then
+            DBMS_OUTPUT.PUT_LINE('Exista mai multe echipe care indeplicesc cerintele!');
+            return -1;
+        when no_data then
+            DBMS_OUTPUT.PUT_LINE('Nu exista echipe care indeplicesca cerintele!');
+            return -2;
+        when others then
+            DBMS_OUTPUT.PUT_LINE('Alta eroare');
+            return -3;
+    end pct8;
+    
+    procedure pct9
+    	(x IN number)
+    IS
+    	id_e echipa.id_echipa%TYPE;
+    	minor EXCEPTION;
+    	varsta number;
+
+    BEGIN
+
+    	select distinct e.id_echipa into id_e
+    	from echipa e, contract c, sponsor s, galerie g, campionat m, planificare l
+    	where e.id_echipa = c.id_echipa and c.id_sponsor = s.id_sponsor and lower(s.nume_sponsor) = 'city insurance'
+    	and g.id_echipa = e.id_echipa and g.numar_participanti > x and (e.id_echipa = l.id_echipa1 or e.id_echipa = l.id_echipa2) 
+    	and l.id_campionat = m.id_campionat and m.tara_desfasurare = 'Romania';
+    
+    	for c in(select p.nume as nume, p.data_nasterii as an_nastere
+            	from persoana p, echipa e, jucator j
+            	where e.id_echipa = id_e and j.id_persoana = p.id_persoana and j.id_echipa = e.id_echipa
+            	order by 2 desc)
+    	loop
+        	select ROUND(MONTHS_BETWEEN(SYSDATE, c.an_nastere))/12 into varsta
+        	from dual;
+
+        	if varsta > 18 then
+            		DBMS_OUTPUT.PUT_LINE('Nume: ' || c.nume || ' Data nasterii: ' || c.an_nastere);
+        	else
+            		RAISE minor;
+        	end if;
+    	end loop;
+    
+    EXCEPTION
+    	when no_data_found then
+        	DBMS_OUTPUT.PUT_LINE('Nu exista echipe care sa indeplineasca cerintele!');
+    	when too_many_rows then
+        	DBMS_OUTPUT.PUT_LINE('Exista mai multe echipe care indeplinesc cerintele!');
+    	when minor then
+        	DBMS_OUTPUT.PUT_LINE('Jucatorul nu are varsta legala pentru a semna un contract!');
+    	when others then
+        	DBMS_OUTPUT.PUT_LINE('Alta eroare');
+    END pct9;
+
+
+    procedure modificare_echipa(id_e echipa.id_echipa%TYPE, 
+                                                x number)
+    IS
+    BEGIN
+        update echipa
+        set numar_jucatori = numar_jucatori + x
+        where id_echipa = id_e;
+    END;
+end pct13;
+/
